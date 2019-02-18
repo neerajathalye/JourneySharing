@@ -1,10 +1,12 @@
-package com.group12.journeysharing;
+package com.group12.journeysharing.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.group12.journeysharing.R;
 
 public class SignInActivity extends AppCompatActivity {
 
