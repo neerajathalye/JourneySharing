@@ -1,8 +1,5 @@
 package com.group12.journeysharing;
 
-import android.support.v4.view.GravityCompat;
-
-import com.group12.journeysharing.activity.HomeActivity;
 import com.group12.journeysharing.model.User;
 
 import org.junit.Test;
