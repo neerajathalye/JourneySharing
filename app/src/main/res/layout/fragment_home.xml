@@ -5,11 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".fragment.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home Fragment"
-        android:textSize="30sp"/>
+        android:layout_height="match_parent" />
+
+    <EditText
+        android:id="@+id/destinationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/white"
+        android:hint="@string/destination_hint"
+        android:inputType="textPostalAddress"
+        android:padding="16dp" />
 
 </FrameLayout>
