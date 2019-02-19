@@ -8,4 +8,9 @@
     tools:context=".activity.HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
+    <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>
