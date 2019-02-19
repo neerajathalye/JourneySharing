@@ -29,4 +29,25 @@ public class ExampleUnitTest {
         assertEquals("1.0", BuildConfig.VERSION_NAME);
 
     }
+
+    @Test
+    public void signUpTest()
+    {
+
+        User user = new User();
+        user.setFirstName("Neeraj");
+        user.setLastName("Athalye");
+        user.setFullName();
+        user.setRating(4.0);
+
+//        assertEquals(true, HomeActivity.mDrawerLayout.isDrawerOpen(GravityCompat.START));
+
+        assertEquals("Neeraj Athalye", user.getFullName());
+        assertEquals(4.0, user.getRating(), 0.001);
+        assertEquals("1.0", BuildConfig.VERSION_NAME);
+
+    }
+
+
+
 }
