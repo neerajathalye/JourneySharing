@@ -21,10 +21,10 @@ public class User {
     private String emergencyEmail;
     private double rating;
 
-    public User(String firstName, String lastName, String fullName, Date dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
+    public User(String firstName, String lastName, Date dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.fullName = fullName;
+        setFullName();
         this.dob = dob;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
@@ -38,6 +38,13 @@ public class User {
     }
 
     public User() {
+    }
+
+    public User(String firstName, String lastName, double rating) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        setFullName();
+        this.rating = rating;
     }
 
     public String getFirstName() {
