@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "916845760750",
+    "firebase_url": "https://journeyrepo.firebaseio.com",
+    "project_id": "journeyrepo",
+    "storage_bucket": "journeyrepo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916845760750:android:66f4bfa6aae135f8",
+        "android_client_info": {
+          "package_name": "com.group12.journeysharing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "916845760750-fab22uc5a0ur007cfetsif18dcp1mdrb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_6QCcRXuIJsk85Ac6EY-49fe-OQSN5FI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
