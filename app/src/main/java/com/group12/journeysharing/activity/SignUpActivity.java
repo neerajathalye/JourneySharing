@@ -1,16 +1,46 @@
 package com.group12.journeysharing.activity;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.group12.journeysharing.R;
+import com.hbb20.CountryCodePicker;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
-public class SignUpActivity extends AppCompatActivity{
+public class SignUpActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
-    EditText countryEditText, stateEditText, cityEditText;
+    EditText firstNameEditText, lastNameEditText, dobEditText, phoneNumberEditText, emailEditText, passwordEditText, confirmPasswordEditText, emNameEditText, emPhoneEditText, emEmailEditText;
+    RadioGroup radioGroup;
+    Button verifyButton, submitButton;
+    CountryCodePicker countryCodePicker;
 
+    private String mVerificationId;
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = null;
 
 
     @Override
@@ -18,11 +48,183 @@ public class SignUpActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        countryEditText = findViewById(R.id.countryEditText);
-        stateEditText = findViewById(R.id.stateEditText);
-        cityEditText = findViewById(R.id.cityEditText);
+        firstNameEditText = findViewById(R.id.firstNameEditText);
+        lastNameEditText = findViewById(R.id.lastNameEditText);
+        dobEditText = findViewById(R.id.dobEditText);
+        phoneNumberEditText = findViewById(R.id.phoneEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
+        emNameEditText = findViewById(R.id.emergencyNameEditText);
+        emPhoneEditText = findViewById(R.id.emergencyPhoneEditText);
+        emEmailEditText = findViewById(R.id.emergencyEmailEditText);
+        radioGroup = findViewById(R.id.radioGroup);
+        verifyButton = findViewById(R.id.verifyButton);
+        submitButton = findViewById(R.id.buttonSubmit);
+        countryCodePicker = findViewById(R.id.countryCodePicker);
+
+
+        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential credential) {
+                // This callback will be invoked in two situations:
+                // 1 - Instant verification. In some cases the phone number can be instantly
+                //     verified without needing to send or enter a verification code.
+                // 2 - Auto-retrieval. On some devices Google Play services can automatically
+                //     detect the incoming verification SMS and perform verification without
+                //     user action.
+                Log.d(":::::::::::::", "onVerificationCompleted:" + credential);
+
+                String code = credential.getSmsCode();
+
+                Toast.makeText(SignUpActivity.this, "Phone Number Verified", Toast.LENGTH_SHORT).show();
+                phoneNumberEditText.setEnabled(false);
+                countryCodePicker.setEnabled(false);
+                verifyButton.setEnabled(false);
+//                signInWithPhoneAuthCredential(credential);
+
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+                // This callback is invoked in an invalid request for verification is made,
+                // for instance if the the phone number format is not valid.
+
+                Toast.makeText(SignUpActivity.this, "Verification Failed", Toast.LENGTH_SHORT).show();
+                phoneNumberEditText.setError("Invalid Phone number");
+                Log.w(":::::::::::::", "onVerificationFailed", e);
+
+                if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    // Invalid request
+                    // ...
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    // The SMS quota for the project has been exceeded
+                    // ...
+                }
+
+
+                // Show a message and update the UI
+                // ...
+            }
+
+            @Override
+            public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
+                // The SMS verification code has been sent to the provided phone number, we
+                // now need to ask the user to enter the code and then construct a credential
+                // by combining the code with a verification ID.
+                Log.d(":::::::::::::", "onCodeSent:" + verificationId);
+
+                // Save verification ID and resending token so we can use them later
+                mVerificationId = verificationId;
+//                mResendToken = token;
+
+
+                final AlertDialog.Builder alert = new AlertDialog.Builder(SignUpActivity.this);
+                final EditText editText = new EditText(SignUpActivity.this);
+                editText.setSingleLine();
+                FrameLayout container = new FrameLayout(SignUpActivity.this);
+                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.topMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                editText.setLayoutParams(params);
+                container.addView(editText);
+                alert.setTitle("Enter OTP");
+                alert.setView(container);
+                alert.setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String otp = String.valueOf(editText.getText());
+                        verifyCode(otp);
+                    }
+                });
+                alert.setNegativeButton(getString(R.string.cancel), null);
+                alert.create();
+                alert.show();
+
+
+                // ...
+            }
+        };
+
+        verifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String phoneNumber = "+" + countryCodePicker.getSelectedCountryCode() + phoneNumberEditText.getText().toString();
+
+                verifyPhoneNumber(phoneNumber);
+            }
+        });
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.mRadioButton)
+                    Toast.makeText(SignUpActivity.this, "Male", Toast.LENGTH_SHORT).show();
+                else if (checkedId == R.id.fRadioButton)
+                    Toast.makeText(SignUpActivity.this, "Female", Toast.LENGTH_SHORT).show();
+                else if (checkedId == R.id.oRadioButton)
+                    Toast.makeText(SignUpActivity.this, "Other", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        String string_date = "01-January-1900";
+        long date = 0;
+
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
+        try {
+            Date d = f.parse(string_date);
+            date = d.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+
+        final DatePickerDialog datePickerDialog = new DatePickerDialog(this, this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+
+        datePickerDialog.getDatePicker().setMinDate(date);
+
+        dobEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    datePickerDialog.show();
+            }
+        });
 
     }
 
+    private void verifyPhoneNumber(String phoneNumber) {
 
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,        // Phone number to verify
+                30,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                SignUpActivity.this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallbacks
+
+
+    }
+
+    void verifyCode(String code)
+    {
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
+        Toast.makeText(SignUpActivity.this, "Phone Number Verified", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+        String date = dayOfMonth + "/" + (month+1) + "/" + year;
+        dobEditText.setText(date);
+
+        Toast.makeText(this, "Date: " + dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_SHORT).show();
+    }
 }

@@ -33,7 +33,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private TextView forgotPassword;
 
 
-
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -80,6 +79,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             finish();
                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         }
+                        else
+                        {
+                            Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -115,15 +118,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 public void onClick(DialogInterface dialog, int which) {
                     String email = String.valueOf(editText.getText());
                     if (TextUtils.isEmpty(email)) {
+                        editText.setError("Email address cannot be empty!");
                         Toast.makeText(SignInActivity.this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
-
                     } else {
                         firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()) {
                                     Toast.makeText(SignInActivity.this, "Please check your email account...", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(SignInActivity.this, SignInActivity.class));
 
                                 } else {
                                     String message = task.getException().getMessage();

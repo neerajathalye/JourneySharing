@@ -43,5 +43,8 @@
     <string name="city">City</string>
     <string name="cancel">cancel</string>
     <string name="send_email">Send Email</string>
+    <string name="emergency_contact_optional">Emergency Contact (Optional)</string>
+    <string name="name">Name</string>
+    <string name="submit">Submit</string>
 
 </resources>
