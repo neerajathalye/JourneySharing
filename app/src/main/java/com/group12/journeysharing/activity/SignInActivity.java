@@ -20,10 +20,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-    private Button SignUpButton;
+    private Button signUpButton;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private Button SignInButton;
+    private Button signInButton;
 
 
 
@@ -37,13 +37,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         firebaseAuth = FirebaseAuth.getInstance();
 
 
-        editTextEmail = (EditText) findViewById(R.id.emailField);
-        editTextPassword = (EditText) findViewById(R.id.passwordField);
-        SignInButton = (Button) findViewById(R.id.buttonSignin);
-        SignUpButton = (Button) findViewById(R.id.buttonRegister);
+        editTextEmail = findViewById(R.id.emailField);
+        editTextPassword = findViewById(R.id.passwordField);
+        signInButton = findViewById(R.id.buttonSignin);
+        signUpButton = findViewById(R.id.buttonRegister);
 
-        SignInButton.setOnClickListener(this);
-        SignUpButton.setOnClickListener(this);
+        signInButton.setOnClickListener(this);
+        signUpButton.setOnClickListener(this);
     }
 
     private void userLogin(){
@@ -77,8 +77,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        if(view == SignInButton){
+        if(view == signInButton){
             userLogin();
+        }
+        if(view == signUpButton){
+            Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+            startActivity(intent);
+//            finish();
         }
     }
 
