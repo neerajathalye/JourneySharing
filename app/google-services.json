@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "643684404079",
+    "firebase_url": "https://journey-sharing-d9b95.firebaseio.com",
+    "project_id": "journey-sharing-d9b95",
+    "storage_bucket": "journey-sharing-d9b95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643684404079:android:66f4bfa6aae135f8",
+        "android_client_info": {
+          "package_name": "com.group12.journeysharing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643684404079-3vejn1p5nnof6915189024iq5ei32n8h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.group12.journeysharing",
+            "certificate_hash": "01dddfc3e60e3f243456fd39ade8a08b3c1973c8"
+          }
+        },
+        {
+          "client_id": "643684404079-nanssjn84upckpfa45h2274968q0f52j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.group12.journeysharing",
+            "certificate_hash": "a184e61d67dae52179927bb77e115eb393521846"
+          }
+        },
+        {
+          "client_id": "643684404079-5gukfv1md57vv282jr2vje75rj9023qg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXLYgWqMuzNn8ifHfI1q_6RGeS3K3zevY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643684404079-5gukfv1md57vv282jr2vje75rj9023qg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
