@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseException;
@@ -22,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.group12.journeysharing.R;
+import com.group12.journeysharing.model.User;
 import com.hbb20.CountryCodePicker;
 
 import java.text.ParseException;
@@ -37,8 +41,14 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
     RadioGroup radioGroup;
     Button verifyButton, submitButton;
     CountryCodePicker countryCodePicker;
+    RadioButton mRadioButton, fRadioButton, oRadioButton;
+
+    TextView genderTextView;
+
+    User user;
 
     private String mVerificationId;
+    boolean isPhoneVerified = false;
 
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = null;
 
@@ -62,7 +72,12 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
         verifyButton = findViewById(R.id.verifyButton);
         submitButton = findViewById(R.id.buttonSubmit);
         countryCodePicker = findViewById(R.id.countryCodePicker);
+        mRadioButton = findViewById(R.id.mRadioButton);
+        fRadioButton = findViewById(R.id.fRadioButton);
+        oRadioButton = findViewById(R.id.oRadioButton);
+        genderTextView = findViewById(R.id.genderTextView);
 
+        user = new User();
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -102,10 +117,6 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                     // The SMS quota for the project has been exceeded
                     // ...
                 }
-
-
-                // Show a message and update the UI
-                // ...
             }
 
             @Override
@@ -118,7 +129,6 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                 // Save verification ID and resending token so we can use them later
                 mVerificationId = verificationId;
 //                mResendToken = token;
-
 
                 final AlertDialog.Builder alert = new AlertDialog.Builder(SignUpActivity.this);
                 final EditText editText = new EditText(SignUpActivity.this);
@@ -144,8 +154,6 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                 alert.create();
                 alert.show();
 
-
-                // ...
             }
         };
 
@@ -159,18 +167,96 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
             }
         });
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.mRadioButton)
-                    Toast.makeText(SignUpActivity.this, "Male", Toast.LENGTH_SHORT).show();
-                else if (checkedId == R.id.fRadioButton)
-                    Toast.makeText(SignUpActivity.this, "Female", Toast.LENGTH_SHORT).show();
-                else if (checkedId == R.id.oRadioButton)
-                    Toast.makeText(SignUpActivity.this, "Other", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+
+                String firstName = firstNameEditText.getText().toString().trim();
+                String lastName = lastNameEditText.getText().toString().trim();
+                String email = emailEditText.getText().toString().trim();
+                String phoneNumber = "+" + countryCodePicker.getSelectedCountryCode() + phoneNumberEditText.getText().toString();
+                String password = passwordEditText.getText().toString().trim();
+                String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+                String emName = emNameEditText.getText().toString().trim();
+                String emPhone = emPhoneEditText.getText().toString().trim();
+                String emEmail = emEmailEditText.getText().toString().trim();
+
+
+                if(firstName.isEmpty())
+                    firstNameEditText.setError(getString(R.string.empty_error));
+                else if(lastName.isEmpty())
+                    lastNameEditText.setError(getString(R.string.empty_error));
+                else if(dobEditText.getText().toString().isEmpty())
+                    dobEditText.setError(getString(R.string.empty_error));
+                else if(!(mRadioButton.isChecked() || fRadioButton.isChecked() || oRadioButton.isChecked()))
+                    genderTextView.setError("Select Gender");
+                else if (!isPhoneVerified)
+                    verifyButton.setError("Phone Number not verified");
+                else if(email.isEmpty())
+                    emailEditText.setError(getString(R.string.empty_error));
+                else if (!isValidEmail(email))
+                    emailEditText.setError("Invalid Email Address");
+                else if(password.isEmpty())
+                    passwordEditText.setError(getString(R.string.empty_error));
+                else if(password.length() < 8 || password.length() > 16)
+                    passwordEditText.setError("Password must be 8-16 characters long");
+                else if(confirmPassword.isEmpty())
+                    confirmPasswordEditText.setError(getString(R.string.empty_error));
+                else if(!password.equals(confirmPassword))
+                    confirmPasswordEditText.setError("Password mismatch");
+
+                else
+                {
+                    if(emName.isEmpty())
+                        emName = "";
+                    if(emPhone.isEmpty())
+                        emPhone = "";
+                    if(emEmail.isEmpty())
+                        emEmail = "";
+
+                    user.setFirstName(firstName);
+                    user.setLastName(lastName);
+                    user.setFullName();
+                    user.setEmail(email);
+                    user.setPhoneNumber(phoneNumber);
+                    user.setEmergencyName(emName);
+                    user.setEmergencyPhoneNumber(emPhone);
+                    user.setEmergencyEmail(emEmail);
+
+                    Toast.makeText(SignUpActivity.this, "user details entered", Toast.LENGTH_SHORT).show();
+
+                    Log.d("FULL NAME :::::::::::::", user.getFullName());
+                    Log.d("DOB :::::::::::::::::::", user.getDob().toString());
+                    Log.d("EM GENDER :::::::::::::", user.getGender());
+                    Log.d("PHONE NUMBER ::::::::::", user.getPhoneNumber());
+                    Log.d("EMAIL :::::::::::::::::", user.getEmail());
+                    Log.d("EM MAIL :::::::::::::::", user.getEmergencyEmail());
+                    Log.d("EM NAME :::::::::::::::", user.getEmergencyName());
+                    Log.d("EM PHONE ::::::::::::::", user.getEmergencyPhoneNumber());
+
+                }
+
             }
         });
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                genderTextView.setError(null);
+                if (checkedId == R.id.mRadioButton) {
+                    Toast.makeText(SignUpActivity.this, "Male", Toast.LENGTH_SHORT).show();
+                    user.setGender("Male");
+                }
+                else if (checkedId == R.id.fRadioButton) {
+                    Toast.makeText(SignUpActivity.this, "Female", Toast.LENGTH_SHORT).show();
+                    user.setGender("Female");
+                }
+                else if (checkedId == R.id.oRadioButton) {
+                    Toast.makeText(SignUpActivity.this, "Other", Toast.LENGTH_SHORT).show();
+                    user.setGender("Other");
+                }
+            }
+        });
 
         String string_date = "01-January-1900";
         long date = 0;
@@ -210,21 +296,32 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                 SignUpActivity.this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
 
-
     }
 
     void verifyCode(String code)
     {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
         Toast.makeText(SignUpActivity.this, "Phone Number Verified", Toast.LENGTH_SHORT).show();
+        isPhoneVerified = true;
+        verifyButton.setError(null);
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-        String date = dayOfMonth + "/" + (month+1) + "/" + year;
-        dobEditText.setText(date);
+        String dateString = dayOfMonth + "/" + (month+1) + "/" + year;
+        dobEditText.setText(dateString);
+        dobEditText.setError(null);
 
-        Toast.makeText(this, "Date: " + dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_SHORT).show();
+        Date date = new Date(year, month, dayOfMonth);
+
+        user.setDob(date);
+
+        Toast.makeText(this, date.toString(), Toast.LENGTH_SHORT).show();
+
+//        Toast.makeText(this, "Date: " + dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_SHORT).show();
+    }
+    public static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 }

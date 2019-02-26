@@ -34,10 +34,25 @@ public class User {
         this.emergencyName = emergencyName;
         this.emergencyPhoneNumber = emergencyPhoneNumber;
         this.emergencyEmail = emergencyEmail;
-        this.rating = rating;
+        this.rating = 0;
+    }
+
+    public User(String firstName, String lastName, Date dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        setFullName();
+        this.dob = dob;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.emergencyName = emergencyName;
+        this.emergencyPhoneNumber = emergencyPhoneNumber;
+        this.emergencyEmail = emergencyEmail;
+        this.rating = 0;
     }
 
     public User() {
+        this.rating = 0;
     }
 
     public User(String firstName, String lastName, double rating) {
