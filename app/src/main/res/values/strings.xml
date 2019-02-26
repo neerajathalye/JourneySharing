@@ -24,6 +24,22 @@
     <string name="sign_in">Sign In</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="email_address">Email Address</string>
-    <string name="password">Password</string>
     <string name="logo">Logo</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="dob">DOB</string>
+    <string name="gender">Gender</string>
+    <string name="m">M</string>
+    <string name="f">F</string>
+    <string name="others">I do not wish to specify</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="verify">Verify</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="home_address">Home Address(Optional)</string>
+    <string name="country">Country</string>
+    <string name="state">State</string>
+    <string name="city">City</string>
+
 </resources>
