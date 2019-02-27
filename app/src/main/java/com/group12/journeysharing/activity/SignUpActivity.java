@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,9 +21,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.group12.journeysharing.R;
@@ -44,6 +51,8 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
     RadioButton mRadioButton, fRadioButton, oRadioButton;
 
     TextView genderTextView;
+
+    FirebaseAuth mAuth;
 
     User user;
 
@@ -79,6 +88,8 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
 
         user = new User();
 
+        mAuth = FirebaseAuth.getInstance();
+
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
@@ -93,10 +104,19 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
 
                 String code = credential.getSmsCode();
 
-                Toast.makeText(SignUpActivity.this, "Phone Number Verified", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(SignUpActivity.this, "Phone Number Verified: " + code, Toast.LENGTH_SHORT).show();
+
                 phoneNumberEditText.setEnabled(false);
                 countryCodePicker.setEnabled(false);
                 verifyButton.setEnabled(false);
+                isPhoneVerified = true;
+//                else
+//                {
+//                    otpVerificationDialog();
+//                }
+
+
 //                signInWithPhoneAuthCredential(credential);
 
             }
@@ -130,29 +150,9 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                 mVerificationId = verificationId;
 //                mResendToken = token;
 
-                final AlertDialog.Builder alert = new AlertDialog.Builder(SignUpActivity.this);
-                final EditText editText = new EditText(SignUpActivity.this);
-                editText.setSingleLine();
-                FrameLayout container = new FrameLayout(SignUpActivity.this);
-                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.topMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                editText.setLayoutParams(params);
-                container.addView(editText);
-                alert.setTitle("Enter OTP");
-                alert.setView(container);
-                alert.setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String otp = String.valueOf(editText.getText());
-                        verifyCode(otp);
-                    }
-                });
-                alert.setNegativeButton(getString(R.string.cancel), null);
-                alert.create();
-                alert.show();
+
+
+
 
             }
         };
@@ -234,6 +234,46 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                     Log.d("EM NAME :::::::::::::::", user.getEmergencyName());
                     Log.d("EM PHONE ::::::::::::::", user.getEmergencyPhoneNumber());
 
+
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(":::::::::::::::::::::::", "createUserWithEmail:success");
+
+
+                                        final FirebaseUser user = mAuth.getCurrentUser();
+                                        user.sendEmailVerification()
+                                                .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task task) {
+
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(SignUpActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                                            Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                                                            startActivity(intent);
+                                                        } else {
+                                                            Log.e(":::::::::::::::::::::::", "sendEmailVerification", task.getException());
+                                                            Toast.makeText(SignUpActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                    else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(":::::::::::::::::::::::", "createUserWithEmail:failure", task.getException());
+                                        Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+//                                        updateUI(null);
+                                    }
+
+                                    // ...
+                                }
+                            });
+
                 }
 
             }
@@ -301,8 +341,10 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
     void verifyCode(String code)
     {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-        Toast.makeText(SignUpActivity.this, "Phone Number Verified", Toast.LENGTH_SHORT).show();
-        isPhoneVerified = true;
+        Toast.makeText(SignUpActivity.this, "Phone Number Verified (Verify Code)", Toast.LENGTH_SHORT).show();
+
+        signInWithPhoneAuthCredential(credential);
+
         verifyButton.setError(null);
     }
 
@@ -323,5 +365,60 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
     }
     public static boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    void otpVerificationDialog()
+    {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(SignUpActivity.this);
+        final EditText editText = new EditText(SignUpActivity.this);
+        editText.setSingleLine();
+        FrameLayout container = new FrameLayout(SignUpActivity.this);
+        FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        editText.setLayoutParams(params);
+        container.addView(editText);
+        alert.setTitle("Enter OTP");
+        alert.setView(container);
+        alert.setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String otp = String.valueOf(editText.getText());
+                verifyCode(otp);
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), null);
+        alert.create();
+        alert.show();
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //verification successful we will start the profile activity
+                            Toast.makeText(SignUpActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
+
+                            mAuth.getCurrentUser().delete();
+
+
+                        } else {
+
+                            //verification unsuccessful.. display an error message
+
+                            String message = "Somthing is wrong, we will fix it soon...";
+
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                message = "Invalid code entered...";
+                            }
+
+                            Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
