@@ -10,7 +10,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String fullName;
-    private Date dob;
+    private String dob;
     private String gender;
     private String phoneNumber;
     private String email;
@@ -20,8 +20,9 @@ public class User {
     private String emergencyPhoneNumber;
     private String emergencyEmail;
     private double rating;
+    private String userId;
 
-    public User(String firstName, String lastName, Date dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
+    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
         this.firstName = firstName;
         this.lastName = lastName;
         setFullName();
@@ -37,7 +38,7 @@ public class User {
         this.rating = 0;
     }
 
-    public User(String firstName, String lastName, Date dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
+    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
         this.firstName = firstName;
         this.lastName = lastName;
         setFullName();
@@ -86,11 +87,11 @@ public class User {
         this.fullName = firstName + " " + lastName;
     }
 
-    public Date getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 
@@ -165,5 +166,13 @@ public class User {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
