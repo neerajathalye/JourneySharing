@@ -257,7 +257,7 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
 
                                                             user.setUserId(firebaseUser.getUid());
 
-                                                            mDatabase.child(user.getUserId()).setValue(user);
+                                                            mDatabase.child("user").child(user.getUserId()).setValue(user);
 
                                                             Toast.makeText(SignUpActivity.this, "Verification email sent to " + firebaseUser.getEmail(), Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);

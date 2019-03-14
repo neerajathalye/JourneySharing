@@ -59,33 +59,43 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
+        boolean validDetails = isValidEmailAndPassword(email, password);
+
+        if(validDetails)
+        {
+
+            //TODO: Check if email is verified
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        //start profile activity
+
+                        //TODO: Download user data from the database
+
+                        //TODO: Pass user data to HomeActivity
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    }
+                    else {
+                        Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+    private boolean isValidEmailAndPassword(String email, String password) {
         if(TextUtils.isEmpty(email)) {
             //email is empty
             Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         if(TextUtils.isEmpty(password)) {
             //password is empty
             Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
-            return;
-
+            return false;
         }
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            //start profile activity
-                            finish();
-                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        }
-                        else
-                        {
-                            Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
+        return true;
     }
 
     @Override
