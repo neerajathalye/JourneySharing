@@ -65,36 +65,35 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(validDetails)
         {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-
-            if (user.isEmailVerified()) {
-                Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
-
-
-                //TODO: Check if email is verified
-
-
-                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //start profile activity
+            //TODO: Check if email is verified
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        //start profile activity
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user.isEmailVerified()) {
+                            Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
 
                             //TODO: Download user data from the database
 
                             //TODO: Pass user data to HomeActivity
                             finish();
                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(SignInActivity.this, "Email Not Verified", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
-            } else {
+                    else
+                {
+                    Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                }
+                }
+            });
 
-                Toast.makeText(SignInActivity.this, "Email Not Verified", Toast.LENGTH_SHORT).show();
 
-            }
+
 
 
         }
