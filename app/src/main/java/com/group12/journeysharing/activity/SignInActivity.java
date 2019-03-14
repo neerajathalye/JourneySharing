@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.group12.journeysharing.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
@@ -55,6 +56,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+
     private void userLogin(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -63,29 +65,43 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(validDetails)
         {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
 
-            //TODO: Check if email is verified
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        //start profile activity
+            if (user.isEmailVerified()) {
+                Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
 
-                        //TODO: Download user data from the database
 
-                        //TODO: Pass user data to HomeActivity
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                //TODO: Check if email is verified
+
+
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //start profile activity
+
+                            //TODO: Download user data from the database
+
+                            //TODO: Pass user data to HomeActivity
+                            finish();
+                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        } else {
+                            Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
-                        Toast.makeText(SignInActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+                });
+            } else {
+
+                Toast.makeText(SignInActivity.this, "Email Not Verified", Toast.LENGTH_SHORT).show();
+
+            }
+
+
         }
     }
     private boolean isValidEmailAndPassword(String email, String password) {
         if(TextUtils.isEmpty(email)) {
+
             //email is empty
             Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
             return false;
@@ -95,7 +111,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
             return false;
         }
-        return true;
+               return true;
     }
 
     @Override
