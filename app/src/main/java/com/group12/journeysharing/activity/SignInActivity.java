@@ -65,7 +65,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(validDetails)
         {
-            //TODO: Check if email is verified
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -74,6 +73,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user.isEmailVerified()) {
                             Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
+
+                            //TODO: Enable auto sign in
 
                             //TODO: Download user data from the database
 

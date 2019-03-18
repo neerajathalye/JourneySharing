@@ -4,6 +4,7 @@ package com.group12.journeysharing.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdate;
@@ -70,26 +72,39 @@ public class HomeFragment extends Fragment {
         mMapView.onResume(); // needed to get the map to display immediately
 
 
+        String apiKey = "AIzaSyBe5jCnOW1PHXRSmkwZ1b2iqnBk1U6zif4";
+        Places.initialize(getContext(), apiKey);
 
-        // Initialize the AutocompleteSupportFragment.
-//        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.autoCompleteFragment);
-//
-//        // Specify the types of place data to return.
-//        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-//
-//            // Set up a PlaceSelectionListener to handle the response.
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-//                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-//            }
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.i(TAG, "An error occurred: " + status);
-//            }
-//        });
+
+//         Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autoCompleteFragment);
+
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.d("============", "Place ID: " + place.getId());
+                Log.d("============", "Place Name: " + place.getName());
+                Log.d("============", "Place Lat_lng: " + place.getLatLng());
+                Log.d("============", "Place Address: " + place.getAddress());
+//                Toast.makeText(getContext(), "Place ID: " + place.getId(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Place Name: " + place.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Place Lat_lng: " + place.getLatLng(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Place Address: " + place.getAddress(), Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "Place: " + place.getName() + ", " + place.getId());
+            }
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Toast.makeText(getContext(), "An error occurred:" + status, Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "An error occurred: " + status);
+            }
+        });
 
 
         try {
@@ -159,6 +174,17 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
