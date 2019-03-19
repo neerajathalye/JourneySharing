@@ -1,5 +1,7 @@
 package com.group12.journeysharing.model;
 
+import java.util.List;
+
 /**
  * Created by Neeraj Athalye on 14-Mar-19.
  */
@@ -8,7 +10,7 @@ public class Preference {
     private String preferredGender; // male, female, other, all
     private long startTime;
     private int maxPassengers;
-    private String modeOfTransport;
+    private List<String> modesOfTransport;
     private int distanceToStartingPoint; //in metres
 
     public Preference() {
@@ -38,12 +40,12 @@ public class Preference {
         this.maxPassengers = maxPassengers;
     }
 
-    public String getModeOfTransport() {
-        return modeOfTransport;
+    public List<String> getModesOfTransport() {
+        return modesOfTransport;
     }
 
-    public void setModeOfTransport(String modeOfTransport) {
-        this.modeOfTransport = modeOfTransport;
+    public void setModesOfTransport(List<String> modesOfTransport) {
+        this.modesOfTransport = modesOfTransport;
     }
 
     public int getDistanceToStartingPoint() {

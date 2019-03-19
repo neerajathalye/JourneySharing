@@ -48,5 +48,17 @@
     <string name="submit">Submit</string>
     <string name="empty_error">This field cannot be empty!</string>
     <string name="book_journey">Book Journey</string>
+    <string name="to">To</string>
+    <string name="preferences">Preferences</string>
+    <string name="from">From</string>
+    <string name="select_date_and_time">Select Date and Time</string>
+    <string name="all">All</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
+    <string name="modes_of_transport">Modes of Transport</string>
+    <string name="maximum_number_of_passengers">Maximum Number of Passengers</string>
+    <string name="preferred_gender">Preferred Gender</string>
+    <string name="distance_to_starting_point">Distance to Starting Point</string>
 
 </resources>

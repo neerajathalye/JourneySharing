@@ -354,7 +354,7 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
         dobEditText.setText(dateString);
         dobEditText.setError(null);
 
-//        Date date = new Date(year, month, dayOfMonth);
+//        Date calendar = new Date(year, month, dayOfMonth);
 
         user.setDob(dateString);
 
