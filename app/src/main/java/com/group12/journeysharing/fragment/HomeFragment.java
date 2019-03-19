@@ -39,13 +39,14 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
+import com.group12.journeysharing.activity.BookJourneyActivity;
 
 import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -55,6 +56,7 @@ public class HomeFragment extends Fragment {
 
     Place destination;
     Button bookJourneyButton;
+    LatLng currentLocation;
 
 
     public HomeFragment() {
@@ -73,6 +75,7 @@ public class HomeFragment extends Fragment {
         mMapView.onResume(); // needed to get the map to display immediately
 
         bookJourneyButton = view.findViewById(R.id.bookJourneyButton);
+        bookJourneyButton.setOnClickListener(this);
 
 
         String apiKey = "AIzaSyBe5jCnOW1PHXRSmkwZ1b2iqnBk1U6zif4";
@@ -156,6 +159,7 @@ public class HomeFragment extends Fragment {
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
                             googleMap.animateCamera(cameraUpdate);
                             locationManager.removeUpdates(this);
+                            currentLocation = latLng;
                         }
 
                         @Override
@@ -216,4 +220,32 @@ public class HomeFragment extends Fragment {
         mMapView.onLowMemory();
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.bookJourneyButton)
+        {
+
+            if(currentLocation == null)
+            {
+                Toast.makeText(getContext(), "Current location cannot be null", Toast.LENGTH_SHORT).show();
+            }
+            else if(destination == null)
+            {
+                Toast.makeText(getContext(), "Please select a destination", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Intent intent = new Intent(getContext(), BookJourneyActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("destination", destination);
+                bundle.putParcelable("source", currentLocation);
+                intent.putExtra("bundle", bundle);
+//                intent.putExtra("destination", destination); //place object
+//                intent.putExtra("source", currentLocation); //latlng object
+                startActivity(intent);
+            }
+
+        }
+    }
 }
