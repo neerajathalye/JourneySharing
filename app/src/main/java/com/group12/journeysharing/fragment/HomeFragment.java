@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -30,19 +31,16 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
 
 import java.util.Arrays;
-import java.util.Objects;
-
-import static android.support.constraint.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +52,9 @@ public class HomeFragment extends Fragment {
     private LocationManager locationManager;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
+
+    Place destination;
+    Button bookJourneyButton;
 
 
     public HomeFragment() {
@@ -71,6 +72,8 @@ public class HomeFragment extends Fragment {
 
         mMapView.onResume(); // needed to get the map to display immediately
 
+        bookJourneyButton = view.findViewById(R.id.bookJourneyButton);
+
 
         String apiKey = "AIzaSyBe5jCnOW1PHXRSmkwZ1b2iqnBk1U6zif4";
         Places.initialize(getContext(), apiKey);
@@ -78,7 +81,6 @@ public class HomeFragment extends Fragment {
 
 //         Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autoCompleteFragment);
-
 
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
@@ -92,11 +94,14 @@ public class HomeFragment extends Fragment {
                 Log.d("============", "Place Name: " + place.getName());
                 Log.d("============", "Place Lat_lng: " + place.getLatLng());
                 Log.d("============", "Place Address: " + place.getAddress());
-//                Toast.makeText(getContext(), "Place ID: " + place.getId(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getContext(), "Place Name: " + place.getName(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getContext(), "Place Lat_lng: " + place.getLatLng(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getContext(), "Place Address: " + place.getAddress(), Toast.LENGTH_SHORT).show();
-//                Log.d(TAG, "Place: " + place.getName() + ", " + place.getId());
+
+                destination = place;
+
+                googleMap.clear();
+                googleMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName()));
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 15);
+                googleMap.animateCamera(cameraUpdate);
+
             }
             @Override
             public void onError(Status status) {

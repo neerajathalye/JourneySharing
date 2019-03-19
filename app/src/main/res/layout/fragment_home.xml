@@ -8,10 +8,15 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@id/bookJourneyButton"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardView"
@@ -34,27 +39,18 @@
                 android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
         </android.support.v7.widget.CardView>
 
-        <!--<android.support.v7.widget.CardView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--app:cardCornerRadius="0dp"-->
-            <!--app:cardElevation="7dp"-->
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/cardView">-->
+        <Button
+            android:id="@+id/bookJourneyButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/book_journey"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <!--<fragment-->
-                <!--android:id="@+id/autoCompleteFragment"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />-->
-        <!--</android.support.v7.widget.CardView>-->
 
     </android.support.constraint.ConstraintLayout>
 

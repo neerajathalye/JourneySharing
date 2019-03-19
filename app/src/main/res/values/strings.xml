@@ -47,5 +47,6 @@
     <string name="name">Name</string>
     <string name="submit">Submit</string>
     <string name="empty_error">This field cannot be empty!</string>
+    <string name="book_journey">Book Journey</string>
 
 </resources>
