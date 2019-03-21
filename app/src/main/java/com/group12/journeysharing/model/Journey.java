@@ -1,5 +1,7 @@
 package com.group12.journeysharing.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
@@ -8,11 +10,10 @@ import java.util.ArrayList;
 public class Journey {
 
     private long journeyId;
-    private double source[]; //lat - 0, long - 1
-    private double destination[]; //lat - 0, long - 1
-    private double startingPoint[]; //lat - 0, long - 1
-    private ArrayList<String> passengerNames;
-
+    private LatLng source;
+    private LatLng destination[];
+    private LatLng startingPoint[];
+    private ArrayList<String> passengerIds; //User Id of other passengers
 
 
 

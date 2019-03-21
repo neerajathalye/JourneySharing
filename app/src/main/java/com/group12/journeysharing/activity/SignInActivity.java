@@ -90,11 +90,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         if (user.isEmailVerified()) {
                             Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
 
-                            //TODO: Enable auto sign in
-
-                            //TODO: Download user data from the database
-
-                            //TODO: Pass user data to HomeActivity
                             finish();
                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         }

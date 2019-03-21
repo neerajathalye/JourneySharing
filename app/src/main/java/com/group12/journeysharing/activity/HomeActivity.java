@@ -102,18 +102,6 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-
-//        Toast.makeText(HomeActivity.this, user.getFullName(), Toast.LENGTH_SHORT).show();
-
-
-
-
-//        User user = new User("Neeraj", "Athalye", 3.8);
-
-
-
-
-
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,8 +120,6 @@ public class HomeActivity extends AppCompatActivity
                 }
             }
         });
-
-
 
         selectedFragmentClass = HomeFragment.class;
 

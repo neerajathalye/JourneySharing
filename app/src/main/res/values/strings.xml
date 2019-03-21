@@ -60,5 +60,6 @@
     <string name="maximum_number_of_passengers">Maximum Number of Passengers</string>
     <string name="preferred_gender">Preferred Gender</string>
     <string name="distance_to_starting_point">Distance to Starting Point</string>
+    <string name="book">Book</string>
 
 </resources>

@@ -65,11 +65,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/preferred_gender"
             android:textColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/modesOfTransportButton" />
+            app:layout_constraintTop_toBottomOf="@+id/startDateTimeTIL" />
 
         <TextView
             android:id="@+id/numberOfPassengersTextView"
@@ -121,7 +121,7 @@
             android:text="@string/modes_of_transport"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/startDateTimeTIL" />
+            app:layout_constraintTop_toBottomOf="@+id/distanceToStartingPointSeekBar" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -196,6 +196,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/distanceToStartingPointTextView" />
 
+        <Button
+            android:id="@+id/bookButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/book"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectedModesOfTransportTextView" />
+
+        <TextView
+            android:id="@+id/selectedModesOfTransportTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorAccent"
+            android:text="Selected: "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/modesOfTransportButton" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

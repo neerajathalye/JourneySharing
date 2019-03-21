@@ -43,12 +43,12 @@ public class BookJourneyActivity extends AppCompatActivity implements View.OnCli
     TextInputLayout fromTIL, toTIL, startDateTimeTIL;
     Calendar calendar;
     boolean isDateTimeSet;
-    Button modesOfTransportButton;
+    Button modesOfTransportButton, bookButton;
     RadioGroup radioGroup;
     Journey journey;
     Preference preference;
     SeekBar passengerSeekBar, distanceToStartingPointSeekBar;
-    TextView numberOfPassengersTextView, distanceToStartingPointTextView;
+    TextView numberOfPassengersTextView, distanceToStartingPointTextView, selectedModesOfTransportTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +68,8 @@ public class BookJourneyActivity extends AppCompatActivity implements View.OnCli
         numberOfPassengersTextView = findViewById(R.id.numberOfPassengersTextView);
         distanceToStartingPointSeekBar = findViewById(R.id.distanceToStartingPointSeekBar);
         distanceToStartingPointTextView = findViewById(R.id.distanceToStartingPointTextView);
+        selectedModesOfTransportTextView = findViewById(R.id.selectedModesOfTransportTextView);
+        bookButton = findViewById(R.id.bookButton);
 
         fromTIL.getEditText().setText(getAddress(source));
         toTIL.getEditText().setText(destination.getName());
@@ -81,6 +83,7 @@ public class BookJourneyActivity extends AppCompatActivity implements View.OnCli
         radioGroup.setOnCheckedChangeListener(this);
         passengerSeekBar.setOnSeekBarChangeListener(this);
         distanceToStartingPointSeekBar.setOnSeekBarChangeListener(this);
+        bookButton.setOnClickListener(this);
 
         preference = new Preference();
 
@@ -212,6 +215,10 @@ public class BookJourneyActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void alertDialogCallback(List<String> list) {
             Toast.makeText(BookJourneyActivity.this, String.valueOf(list.size()), Toast.LENGTH_SHORT).show();
+            StringBuilder selected = new StringBuilder();
+            for(String s : list)
+                selected.append(s).append(", ");
+            selectedModesOfTransportTextView.setText("Selected: " + selected.toString().substring(0, selected.length() - 2));
             preference.setModesOfTransport(list);
     }
 
