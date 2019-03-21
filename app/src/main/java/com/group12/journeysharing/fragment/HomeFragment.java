@@ -29,9 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -39,7 +37,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
-import com.group12.journeysharing.activity.BookJourneyActivity;
+import com.group12.journeysharing.activity.JourneyDetailsActivity;
 
 import java.util.Arrays;
 
@@ -235,7 +233,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
             else
             {
-                Intent intent = new Intent(getContext(), BookJourneyActivity.class);
+                Intent intent = new Intent(getContext(), JourneyDetailsActivity.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("destination", destination);
