@@ -1,11 +1,14 @@
 package com.group12.journeysharing.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
  * Created by Neeraj Athalye on 14-Mar-19.
  */
-public class Preference {
+public class Preference implements Parcelable {
 
     private String preferredGender; // male, female, other, all
     private long startTime;
@@ -15,6 +18,26 @@ public class Preference {
 
     public Preference() {
     }
+
+    protected Preference(Parcel in) {
+        preferredGender = in.readString();
+        startTime = in.readLong();
+        maxPassengers = in.readInt();
+        modesOfTransport = in.createStringArrayList();
+        distanceToStartingPoint = in.readInt();
+    }
+
+    public static final Creator<Preference> CREATOR = new Creator<Preference>() {
+        @Override
+        public Preference createFromParcel(Parcel in) {
+            return new Preference(in);
+        }
+
+        @Override
+        public Preference[] newArray(int size) {
+            return new Preference[size];
+        }
+    };
 
     public String getPreferredGender() {
         return preferredGender;
@@ -54,5 +77,19 @@ public class Preference {
 
     public void setDistanceToStartingPoint(int distanceToStartingPoint) {
         this.distanceToStartingPoint = distanceToStartingPoint;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(preferredGender);
+        dest.writeLong(startTime);
+        dest.writeInt(maxPassengers);
+        dest.writeList(modesOfTransport);
+        dest.writeInt(distanceToStartingPoint);
     }
 }

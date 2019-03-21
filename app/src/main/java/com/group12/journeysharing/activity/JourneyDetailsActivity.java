@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.design.widget.TextInputLayout;
@@ -56,7 +57,7 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_journey);
+        setContentView(R.layout.activity_journey_details);
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("journey");
@@ -97,7 +98,7 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
     }
     public String getAddress(LatLng latLng) {
 
-        String add = null;
+        StringBuilder add = new StringBuilder();
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -110,8 +111,20 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
 //            add = add + "\n" + obj.getSubAdminArea();
 //            add = add + "\n" + obj.getLocality();
             if(obj.getSubThoroughfare() != null)
-                add = obj.getSubThoroughfare() + ", ";
-            add = add + obj.getThoroughfare();
+                add.append(obj.getSubThoroughfare() + ", ");
+            if(obj.getThoroughfare() != null )
+                add.append(obj.getThoroughfare());
+            else if(obj.getSubThoroughfare() == null && obj.getThoroughfare() == null)
+            {
+                if(obj.getLocality() != null)
+                    add.append(obj.getLocality());
+                else if(obj.getSubAdminArea() != null)
+                    add.append(obj.getSubAdminArea());
+                else if(obj.getAdminArea() != null)
+                    add.append(obj.getAdminArea());
+                else if(obj.getCountryName() != null)
+                    add.append(obj.getCountryName());
+            }
 
 
             Log.v("IGA", "Address " + add);
@@ -125,7 +138,7 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        return add;
+        return add.toString();
     }
 
 
@@ -144,7 +157,7 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         calendar.set(Calendar.MINUTE, minute);
                         isDateTimeSet = true;
-                        Log.d("========", "The choosen one " + calendar.getTimeInMillis());
+                        Log.d("========", "The chosen one " + calendar.getTimeInMillis());
 
                         SimpleDateFormat outputDateFormat = new SimpleDateFormat("EEE, d MMM HH:mm a");
 
@@ -188,16 +201,21 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
             else
             {
 
-                //Search for journey. if not found, then create
-//                Intent intent = new Intent()
+
                 journey.setJourneyId(journeyId);
                 journey.setUser(firebaseAuth.getCurrentUser().getUid());
-                journey.setSource(source);
-                journey.setDestination(destination.getLatLng());
+                journey.setSource(new com.group12.journeysharing.model.LatLng(source));
+                journey.setDestination(new com.group12.journeysharing.model.LatLng(destination.getLatLng()));
                 journey.setStartingPoint(null);
                 journey.setPassengerIds(null);
                 journey.setPreference(preference);
-                Toast.makeText(this, "Data successfully entered", Toast.LENGTH_SHORT).show();
+
+                //Search for journey. if not found, then create
+                Intent intent = new Intent(JourneyDetailsActivity.this, BookJourneyActivity.class);
+                intent.putExtra("journey", journey);
+                startActivity(intent);
+
+//                Toast.makeText(this, "Data successfully entered", Toast.LENGTH_SHORT).show();
                 databaseReference.child(journeyId).setValue(journey);
             }
 
