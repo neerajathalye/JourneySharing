@@ -27,6 +27,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
 import com.group12.journeysharing.fragment.AccountFragment;
@@ -43,6 +50,10 @@ public class HomeActivity extends AppCompatActivity
     private static final int CAMERA_REQUEST = 3;
     Class selectedFragmentClass = null;
     ImageView profileImageView;
+    FirebaseUser firebaseUser;
+    FirebaseAuth firebaseAuth;
+    DatabaseReference databaseReference;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +61,6 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,18 +72,46 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerView = navigationView.getHeaderView(0);
-        TextView fullNameTextView = headerView.findViewById(R.id.fullName);
-        TextView ratingTextView = headerView.findViewById(R.id.rating);
-        RatingBar ratingBar = headerView.findViewById(R.id.ratingBar);
+        final TextView fullNameTextView = headerView.findViewById(R.id.fullName);
+        final TextView ratingTextView = headerView.findViewById(R.id.rating);
+        final RatingBar ratingBar = headerView.findViewById(R.id.ratingBar);
         profileImageView = headerView.findViewById(R.id.profileImageView);
         ImageButton imageButton = headerView.findViewById(R.id.imageButton);
 
-        User user = new User("Neeraj", "Athalye", 3.8);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+
+        Toast.makeText(this, firebaseUser.getEmail(), Toast.LENGTH_SHORT).show();
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("user");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+                Toast.makeText(HomeActivity.this, user.getFullName(), Toast.LENGTH_SHORT).show();
+                fullNameTextView.setText(user.getFullName());
+                ratingTextView.setText(String.valueOf(user.getRating()));
+                ratingBar.setRating((float) user.getRating());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
-        fullNameTextView.setText(user.getFullName());
-        ratingTextView.setText(String.valueOf(user.getRating()));
-        ratingBar.setRating((float) user.getRating());
+//        Toast.makeText(HomeActivity.this, user.getFullName(), Toast.LENGTH_SHORT).show();
+
+
+
+
+//        User user = new User("Neeraj", "Athalye", 3.8);
+
+
+
 
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +206,7 @@ public class HomeActivity extends AppCompatActivity
             builder.setTitle(R.string.logout_string);
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    firebaseAuth.signOut();
                     Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                     startActivity(intent);
                     finish();

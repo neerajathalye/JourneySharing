@@ -36,6 +36,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private FirebaseAuth firebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,21 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signInButton.setOnClickListener(this);
         signUpButton.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
+
+        if(firebaseAuth.getCurrentUser() != null)
+        {
+//            Toast.makeText(this, firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("user", firebaseAuth.getCurrentUser());
+            Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+//            intent.putExtra("bundle", bundle);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
