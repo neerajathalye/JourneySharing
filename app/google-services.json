@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "643684404079-3eade8l4edhn99d010ld35057imds4v0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.group12.journeysharing",
+            "certificate_hash": "52263336626cd46a9c2616ca30163f6e8716dd22"
+          }
+        },
+        {
           "client_id": "643684404079-5gukfv1md57vv282jr2vje75rj9023qg.apps.googleusercontent.com",
           "client_type": 3
         }
