@@ -25,6 +25,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.group12.journeysharing.AlertDialogCallback;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.model.Journey;
@@ -95,6 +96,15 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
         preference = new Preference();
         journey = new Journey();
 
+        preference.setPreferredGender("All");
+        String numberOfPassengers = getString(R.string.maximum_number_of_passengers) + ": " + 5;
+        numberOfPassengersTextView.setText(numberOfPassengers);
+        preference.setMaxPassengers(5);
+
+        String distanceToStartingPoint = getString(R.string.distance_to_starting_point) + ": " + (1000) +"m";
+        distanceToStartingPointTextView.setText(distanceToStartingPoint);
+        preference.setDistanceToStartingPoint(1000);
+
     }
     public String getAddress(LatLng latLng) {
 
@@ -103,13 +113,6 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
         try {
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             Address obj = addresses.get(0);
-//            add = obj.getAddressLine(0);
-//            add = add + "\n" + obj.getCountryName();
-//            add = add + "\n" + obj.getCountryCode();
-//            add = add + "\n" + obj.getAdminArea();
-//            add = add + "\n" + obj.getPostalCode();
-//            add = add + "\n" + obj.getSubAdminArea();
-//            add = add + "\n" + obj.getLocality();
             if(obj.getSubThoroughfare() != null)
                 add.append(obj.getSubThoroughfare() + ", ");
             if(obj.getThoroughfare() != null )
@@ -171,7 +174,6 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 864000000);
         datePickerDialog.show();
-
     }
 
     @Override
@@ -200,8 +202,6 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
                 Toast.makeText(this, "Choose modes of transport", Toast.LENGTH_SHORT).show();
             else
             {
-
-
                 journey.setJourneyId(journeyId);
                 journey.setUser(firebaseAuth.getCurrentUser().getUid());
                 journey.setSource(new com.group12.journeysharing.model.LatLng(source));
@@ -210,13 +210,17 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
                 journey.setPassengerIds(null);
                 journey.setPreference(preference);
 
+                Gson gson = new Gson();
+                String json = gson.toJson(journey);
+                Log.d("JSON", json);
+
                 //Search for journey. if not found, then create
                 Intent intent = new Intent(JourneyDetailsActivity.this, BookJourneyActivity.class);
-                intent.putExtra("journey", journey);
+                intent.putExtra("json", json);
                 startActivity(intent);
 
 //                Toast.makeText(this, "Data successfully entered", Toast.LENGTH_SHORT).show();
-                databaseReference.child(journeyId).setValue(journey);
+//                databaseReference.child(journeyId).setValue(journey);
             }
 
         }
@@ -227,13 +231,9 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
         final ArrayList<Integer> selectedItemsIndex = new ArrayList<>();
         final List<String>[] selectedItems = new List[]{new ArrayList<>()};
 
-        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        // 2. Chain together various setter methods to set the dialog characteristics
         builder.setTitle("Select Modes of Transport")
-        // Specify the list array, the items to be selected by default (null for none),
-        // and the listener through which to receive callbacks when items are selected
            .setMultiChoiceItems(R.array.modesOfTransport, null,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
@@ -312,15 +312,15 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
         if(seekBar.getId() == R.id.passengerSeekBar) {
-            String numberOfPassengers = getString(R.string.maximum_number_of_passengers) + ": " + progress;
+            String numberOfPassengers = getString(R.string.maximum_number_of_passengers) + ": " + seekBar.getProgress();
             numberOfPassengersTextView.setText(numberOfPassengers);
-            preference.setMaxPassengers(progress);
+            preference.setMaxPassengers(seekBar.getProgress());
         }
         else if(seekBar.getId() == R.id.distanceToStartingPointSeekBar)
         {
-            String distanceToStartingPoint = getString(R.string.distance_to_starting_point) + ": " + (progress*100) +"m";
+            String distanceToStartingPoint = getString(R.string.distance_to_starting_point) + ": " + (seekBar.getProgress()*100) +"m";
             distanceToStartingPointTextView.setText(distanceToStartingPoint);
-            preference.setDistanceToStartingPoint(progress*100);
+            preference.setDistanceToStartingPoint(seekBar.getProgress()*100);
         }
     }
 
@@ -331,6 +331,7 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
 
     }
 }

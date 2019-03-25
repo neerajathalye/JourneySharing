@@ -1,10 +1,12 @@
 package com.group12.journeysharing.activity;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.group12.journeysharing.JourneyAdapter;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.model.Journey;
@@ -28,6 +31,7 @@ public class BookJourneyActivity extends AppCompatActivity {
     RecyclerView journeyRecyclerView;
     JourneyAdapter journeyAdapter;
     ArrayList<Journey> journeys;
+    String routesAPIKey = "AIzaSyDqRlGeXvPrmrf9oDhfWX8jD5xGWRxPt9s";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,26 +40,42 @@ public class BookJourneyActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("journey");
-        journey = getIntent().getParcelableExtra("journey");
+
+        String json = getIntent().getStringExtra("json");
+        Log.d("JSON:::", json);
+
+        Gson gson = new Gson();
+        journey = gson.fromJson(json, Journey.class);
 
         journeyRecyclerView = findViewById(R.id.journeyRecyclerView);
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-//                GenericTypeIndicator<ArrayList<Journey>> typeIndicator = new GenericTypeIndicator<ArrayList<Journey>>() {};
 
                 journeys = new ArrayList<>();
 
                 for(DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
-                    Journey journey = snapshot.getValue(Journey.class);
-                    journeys.add(journey);
+                    Journey j = snapshot.getValue(Journey.class);
+
+                    Location s1 = new Location("");
+                    s1.setLatitude(journey.getSource().getLatitude());
+                    s1.setLongitude(journey.getSource().getLongitude());
+
+                    Location s2 = new Location("");
+                    s2.setLatitude(j.getSource().getLatitude());
+                    s2.setLongitude(j.getSource().getLongitude());
+                    float distanceInMeters = s1.distanceTo(s2);
+                    Toast.makeText(BookJourneyActivity.this, "Distance: " + distanceInMeters, Toast.LENGTH_SHORT).show();
+                    if(distanceInMeters <= journey.getPreference().getDistanceToStartingPoint() && distanceInMeters <= j.getPreference().getDistanceToStartingPoint())
+                        journeys.add(j);
+                    else
+                    {
+                        databaseReference.child(journey.getJourneyId()).setValue(journey);
+                    }
                 }
-
-
-//                journeys = dataSnapshot.getValue(typeIndicator);
 
                 journeyAdapter = new JourneyAdapter(journeys, BookJourneyActivity.this);
                 journeyRecyclerView.setAdapter(journeyAdapter);

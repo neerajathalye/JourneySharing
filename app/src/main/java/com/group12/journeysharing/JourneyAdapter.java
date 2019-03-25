@@ -66,13 +66,7 @@ public class JourneyAdapter extends RecyclerView.Adapter<JourneyViewHolder> {
         try {
             List<Address> addresses = geocoder.getFromLocation(latLng.getLatitude(), latLng.getLongitude(), 1);
             Address obj = addresses.get(0);
-//            add = obj.getAddressLine(0);
-//            add = add + "\n" + obj.getCountryName();
-//            add = add + "\n" + obj.getCountryCode();
-//            add = add + "\n" + obj.getAdminArea();
-//            add = add + "\n" + obj.getPostalCode();
-//            add = add + "\n" + obj.getSubAdminArea();
-//            add = add + "\n" + obj.getLocality();
+
             if(obj.getSubThoroughfare() != null)
                 add.append(obj.getSubThoroughfare() + ", ");
             if(obj.getThoroughfare() != null )
