@@ -203,12 +203,14 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
             else
             {
                 journey.setJourneyId(journeyId);
-                journey.setUser(firebaseAuth.getCurrentUser().getUid());
+                journey.setUserId(firebaseAuth.getCurrentUser().getUid());
                 journey.setSource(new com.group12.journeysharing.model.LatLng(source));
                 journey.setDestination(new com.group12.journeysharing.model.LatLng(destination.getLatLng()));
                 journey.setStartingPoint(null);
                 journey.setPassengerIds(null);
                 journey.setPreference(preference);
+                journey.setStatus("active");
+                journey.setCreatedDate(System.currentTimeMillis());
 
                 Gson gson = new Gson();
                 String json = gson.toJson(journey);
@@ -272,7 +274,6 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
                 });
 
         builder.create().show();
-
     }
 
     @Override

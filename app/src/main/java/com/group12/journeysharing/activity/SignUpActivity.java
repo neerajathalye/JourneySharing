@@ -222,6 +222,7 @@ public class SignUpActivity extends AppCompatActivity implements DatePickerDialo
                     user.setEmergencyName(emName);
                     user.setEmergencyPhoneNumber(emPhone);
                     user.setEmergencyEmail(emEmail);
+                    user.setActive(false);
 
                     Toast.makeText(SignUpActivity.this, "user details entered", Toast.LENGTH_SHORT).show();
 

@@ -39,6 +39,7 @@ import com.group12.journeysharing.Util;
 import com.group12.journeysharing.fragment.AccountFragment;
 import com.group12.journeysharing.fragment.BookingHistoryFragment;
 import com.group12.journeysharing.fragment.HomeFragment;
+import com.group12.journeysharing.fragment.JourneyFragment;
 import com.group12.journeysharing.fragment.SupportFragment;
 import com.group12.journeysharing.model.User;
 import com.squareup.picasso.Picasso;
@@ -94,6 +95,12 @@ public class HomeActivity extends AppCompatActivity
                 fullNameTextView.setText(user.getFullName());
                 ratingTextView.setText(String.valueOf(user.getRating()));
                 ratingBar.setRating((float) user.getRating());
+
+                if(user.isActive())
+                    setInitialFragment(JourneyFragment.class);
+                else
+                    setInitialFragment(HomeFragment.class);
+
             }
 
             @Override
@@ -121,7 +128,12 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        selectedFragmentClass = HomeFragment.class;
+
+    }
+
+    public void setInitialFragment(Class fragmentClass)
+    {
+        selectedFragmentClass = fragmentClass;
 
         Fragment fragment = null;
         try {
@@ -136,7 +148,6 @@ public class HomeActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -168,7 +179,17 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            new AlertDialog.Builder(this)
+                    .setTitle("Are you sure you want to close Journey Sharing?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
     }
 
@@ -219,37 +240,51 @@ public class HomeActivity extends AppCompatActivity
 
 
         if (id == R.id.nav_home) {
-            // Handle the camera action
-            selectedFragmentClass = HomeFragment.class;
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    user = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+                    if(user.isActive())
+                        setInitialFragment(JourneyFragment.class);
+                    else
+                        setInitialFragment(HomeFragment.class);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
         } else if (id == R.id.nav_account) {
-            selectedFragmentClass = AccountFragment.class;
+            setInitialFragment(AccountFragment.class);
+//            selectedFragmentClass = AccountFragment.class;
 
         } else if (id == R.id.nav_booking_history) {
-            selectedFragmentClass = BookingHistoryFragment.class;
+            setInitialFragment(BookingHistoryFragment.class);
+//            selectedFragmentClass = BookingHistoryFragment.class;
         } else if (id == R.id.nav_support) {
-            selectedFragmentClass = SupportFragment.class;
+            setInitialFragment(SupportFragment.class);
+//            selectedFragmentClass = SupportFragment.class;
 
         }
 
-        try {
-            fragment = (Fragment) selectedFragmentClass.newInstance();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        assert fragment != null;
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+//        try {
+//            fragment = (Fragment) selectedFragmentClass.newInstance();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Insert the fragment by replacing any existing fragment
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        assert fragment != null;
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         item.setChecked(true);
         setTitle(item.getTitle());
-
-
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

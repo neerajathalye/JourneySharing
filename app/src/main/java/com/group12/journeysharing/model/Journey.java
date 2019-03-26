@@ -16,15 +16,17 @@ public class Journey {
     private LatLng startingPoint;
     private ArrayList<String> passengerIds; //User Id of other passengers
     private Preference preference;
+    private String status; //can be: active, ongoing, completed, cancelled
+    private long createdDate;
 
     public Journey() {
     }
 
-    public String getUser() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUser(String userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -76,4 +78,19 @@ public class Journey {
         this.preference = preference;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public long getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(long createdDate) {
+        this.createdDate = createdDate;
+    }
 }

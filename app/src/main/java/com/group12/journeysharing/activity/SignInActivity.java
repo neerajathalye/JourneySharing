@@ -56,13 +56,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(firebaseAuth.getCurrentUser() != null)
         {
-//            Toast.makeText(this, firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelable("user", firebaseAuth.getCurrentUser());
             Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-//            intent.putExtra("bundle", bundle);
             startActivity(intent);
+            finish();
         }
         else
         {
@@ -89,9 +85,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user.isEmailVerified()) {
                             Toast.makeText(SignInActivity.this, "Email Verified", Toast.LENGTH_SHORT).show();
-
+                            startActivity(new Intent(SignInActivity.this, HomeActivity.class));
                             finish();
-                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         }
                         else {
                             Toast.makeText(SignInActivity.this, "Email Not Verified", Toast.LENGTH_SHORT).show();
@@ -133,7 +128,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if(view == signUpButton){
             Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
             startActivity(intent);
-//            finish();
+            finish();
         }
         if(view == forgotPassword) {
 

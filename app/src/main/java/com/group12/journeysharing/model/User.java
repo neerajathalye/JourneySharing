@@ -1,7 +1,5 @@
 package com.group12.journeysharing.model;
 
-import java.util.Date;
-
 /**
  * Created by Neeraj Athalye on 18-Feb-19.
  */
@@ -21,47 +19,51 @@ public class User {
     private String emergencyEmail;
     private double rating;
     private String userId;
-
-    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        setFullName();
-        this.dob = dob;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.homeAddress = homeAddress;
-        this.workAddress = workAddress;
-        this.emergencyName = emergencyName;
-        this.emergencyPhoneNumber = emergencyPhoneNumber;
-        this.emergencyEmail = emergencyEmail;
-        this.rating = 0;
-    }
-
-    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        setFullName();
-        this.dob = dob;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.emergencyName = emergencyName;
-        this.emergencyPhoneNumber = emergencyPhoneNumber;
-        this.emergencyEmail = emergencyEmail;
-        this.rating = 0;
-    }
+    private boolean active; // To check if the user is currently part of any journey
 
     public User() {
-        this.rating = 0;
     }
 
-    public User(String firstName, String lastName, double rating) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        setFullName();
-        this.rating = rating;
-    }
+    //    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        setFullName();
+//        this.dob = dob;
+//        this.gender = gender;
+//        this.phoneNumber = phoneNumber;
+//        this.email = email;
+//        this.homeAddress = homeAddress;
+//        this.workAddress = workAddress;
+//        this.emergencyName = emergencyName;
+//        this.emergencyPhoneNumber = emergencyPhoneNumber;
+//        this.emergencyEmail = emergencyEmail;
+//        this.rating = 0;
+//    }
+//
+//    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        setFullName();
+//        this.dob = dob;
+//        this.gender = gender;
+//        this.phoneNumber = phoneNumber;
+//        this.email = email;
+//        this.emergencyName = emergencyName;
+//        this.emergencyPhoneNumber = emergencyPhoneNumber;
+//        this.emergencyEmail = emergencyEmail;
+//        this.rating = 0;
+//    }
+
+//    public User() {
+//        this.rating = 0;
+//    }
+
+//    public User(String firstName, String lastName, double rating) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        setFullName();
+//        this.rating = rating;
+//    }
 
     public String getFirstName() {
         return firstName;
@@ -174,5 +176,13 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -31,7 +31,7 @@ public class BookJourneyActivity extends AppCompatActivity {
     RecyclerView journeyRecyclerView;
     JourneyAdapter journeyAdapter;
     ArrayList<Journey> journeys;
-    String routesAPIKey = "AIzaSyDqRlGeXvPrmrf9oDhfWX8jD5xGWRxPt9s";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class BookJourneyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_journey);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("journey");
+        databaseReference = FirebaseDatabase.getInstance().getReference("");
 
         String json = getIntent().getStringExtra("json");
         Log.d("JSON:::", json);
@@ -49,33 +49,44 @@ public class BookJourneyActivity extends AppCompatActivity {
 
         journeyRecyclerView = findViewById(R.id.journeyRecyclerView);
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("journey").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 journeys = new ArrayList<>();
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                if(!dataSnapshot.hasChildren())
                 {
-                    Journey j = snapshot.getValue(Journey.class);
-
-                    Location s1 = new Location("");
-                    s1.setLatitude(journey.getSource().getLatitude());
-                    s1.setLongitude(journey.getSource().getLongitude());
-
-                    Location s2 = new Location("");
-                    s2.setLatitude(j.getSource().getLatitude());
-                    s2.setLongitude(j.getSource().getLongitude());
-                    float distanceInMeters = s1.distanceTo(s2);
-                    Toast.makeText(BookJourneyActivity.this, "Distance: " + distanceInMeters, Toast.LENGTH_SHORT).show();
-                    if(distanceInMeters <= journey.getPreference().getDistanceToStartingPoint() && distanceInMeters <= j.getPreference().getDistanceToStartingPoint())
-                        journeys.add(j);
-                    else
+                    databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
+                    databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+                }
+                else
+                {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        databaseReference.child(journey.getJourneyId()).setValue(journey);
+                        Journey j = snapshot.getValue(Journey.class);
+
+                        Location s1 = new Location("");
+                        s1.setLatitude(journey.getSource().getLatitude());
+                        s1.setLongitude(journey.getSource().getLongitude());
+
+                        Location s2 = new Location("");
+                        s2.setLatitude(j.getSource().getLatitude());
+                        s2.setLongitude(j.getSource().getLongitude());
+                        float distanceInMeters = s1.distanceTo(s2);
+                        Toast.makeText(BookJourneyActivity.this, "Distance: " + distanceInMeters, Toast.LENGTH_SHORT).show();
+                        if(distanceInMeters <= journey.getPreference().getDistanceToStartingPoint() && distanceInMeters <= j.getPreference().getDistanceToStartingPoint() && j.getStatus().equals("active"))
+                            //Join existing journey
+                            journeys.add(j);
+                        else
+                        {
+                            //create new journey
+                            databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
+                            databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+                        }
                     }
                 }
+
 
                 journeyAdapter = new JourneyAdapter(journeys, BookJourneyActivity.this);
                 journeyRecyclerView.setAdapter(journeyAdapter);
