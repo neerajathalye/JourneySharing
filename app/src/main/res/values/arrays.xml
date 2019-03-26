@@ -6,9 +6,7 @@
         <item>Motorcycle</item>
         <item>Cycle</item>
         <item>Cab</item>
-        <item>Bus</item>
-        <item>Train</item>
-        <item>Tram</item>
+        <item>Public Transport</item>
 
 
     </string-array>

@@ -280,10 +280,14 @@ public class JourneyDetailsActivity extends AppCompatActivity implements View.On
     public void alertDialogCallback(List<String> list) {
             Toast.makeText(JourneyDetailsActivity.this, String.valueOf(list.size()), Toast.LENGTH_SHORT).show();
             StringBuilder selected = new StringBuilder();
-            for(String s : list)
-                selected.append(s).append(", ");
-            selectedModesOfTransportTextView.setText("Selected: " + selected.toString().substring(0, selected.length() - 2));
-            preference.setModesOfTransport(list);
+
+            if(list.size() != 0)
+            {
+                for(String s : list)
+                    selected.append(s).append(", ");
+                selectedModesOfTransportTextView.setText("Selected: " + selected.toString().substring(0, selected.length() - 2));
+                preference.setModesOfTransport(list);
+            }
     }
 
     @Override

@@ -274,7 +274,7 @@ public class JourneyFragment extends Fragment {
             mode = "mode=walking";
         else if(modesOfTransport.contains("Cycle"))
             mode = "mode=bicycling";
-        else if(modesOfTransport.contains("Bus") || modesOfTransport.contains("Train")  || modesOfTransport.contains("Tram"))
+        else if(modesOfTransport.contains("Public Transport"))
             mode = "mode=transit";
 
         // Building the parameters to the web service
