@@ -2,14 +2,14 @@
 <resources>
     <string-array name="modesOfTransport" >
         <item>Walk</item>
-        <item>Personal Car</item>
+        <item>Car</item>
+        <item>Motorcycle</item>
+        <item>Cycle</item>
         <item>Cab</item>
         <item>Bus</item>
         <item>Train</item>
         <item>Tram</item>
-        <item>Motorcycle</item>
-        <item>Cycle</item>
-        <item>Boat/Ship</item>
-        <item>Airplane</item>
+
+
     </string-array>
 </resources>

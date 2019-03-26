@@ -1,5 +1,6 @@
 package com.group12.journeysharing.activity;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +60,10 @@ public class BookJourneyActivity extends AppCompatActivity {
                 {
                     databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
                     databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+
+                    Intent intent = new Intent(BookJourneyActivity.this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
                 else
                 {
@@ -83,6 +88,10 @@ public class BookJourneyActivity extends AppCompatActivity {
                             //create new journey
                             databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
                             databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+
+                            Intent intent = new Intent(BookJourneyActivity.this, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
                         }
                     }
                 }

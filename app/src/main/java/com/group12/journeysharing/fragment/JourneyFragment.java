@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,17 +27,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.group12.journeysharing.DirectionsJSONParser;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
 import com.group12.journeysharing.model.Journey;
@@ -62,13 +61,11 @@ public class JourneyFragment extends Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
-    private LocationManager locationManager;
-    private static final long MIN_TIME = 400;
-    private static final float MIN_DISTANCE = 1000;
 
-    LatLng currentLocation;
     LatLng source;
     LatLng destination;
+
+    List<String> modesOfTransport;
 
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
@@ -101,6 +98,8 @@ public class JourneyFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        modesOfTransport = new ArrayList<>();
 
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -142,6 +141,7 @@ public class JourneyFragment extends Fragment {
                                     {
                                         source = new LatLng(j.getSource().getLatitude(), j.getSource().getLongitude());
                                         destination = new LatLng(j.getDestination().getLatitude(), j.getDestination().getLongitude());
+                                        modesOfTransport = j.getPreference().getModesOfTransport();
 
                                         googleMap.addMarker(new MarkerOptions().position(destination));
 
@@ -163,31 +163,6 @@ public class JourneyFragment extends Fragment {
                         }
                     });
 
-                    locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-                            googleMap.animateCamera(cameraUpdate);
-                            locationManager.removeUpdates(this);
-                            currentLocation = latLng;
-                        }
-
-                        @Override
-                        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                        }
-
-                        @Override
-                        public void onProviderEnabled(String provider) {
-
-                        }
-                        @Override
-                        public void onProviderDisabled(String provider) {
-//
-                        }
-                    }); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
                 }
             }
         });
@@ -221,20 +196,20 @@ public class JourneyFragment extends Fragment {
         }
     }
 
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap>>> {
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
         @Override
-        protected List<List<HashMap>> doInBackground(String... jsonData) {
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
             JSONObject jObject;
-            List<List<HashMap>> routes = null;
+            List<List<HashMap<String, String>>> routes = null;
 
             try {
                 jObject = new JSONObject(jsonData[0]);
-//                DirectionsJSONParser parser = new DirectionsJSONParser();
+                DirectionsJSONParser parser = new DirectionsJSONParser();
 //
-//                routes = parser.parse(jObject);
+                routes = parser.parse(jObject);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -242,22 +217,22 @@ public class JourneyFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(List<List<HashMap>> result) {
-            ArrayList points = null;
-            PolylineOptions lineOptions = null;
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points = new ArrayList<>();
+            PolylineOptions lineOptions = new PolylineOptions();
             MarkerOptions markerOptions = new MarkerOptions();
 
             for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList();
-                lineOptions = new PolylineOptions();
+//                points = new ArrayList();
+//                lineOptions = new PolylineOptions();
 
-                List<HashMap> path = result.get(i);
+                List<HashMap<String, String>> path = result.get(i);
 
                 for (int j = 0; j < path.size(); j++) {
-                    HashMap point = path.get(j);
+                    HashMap<String, String> point = path.get(j);
 
-                    double lat = Double.parseDouble(String.valueOf(point.get("lat")));
-                    double lng = Double.parseDouble(String.valueOf(point.get("lng")));
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
 
                     points.add(position);
@@ -270,8 +245,14 @@ public class JourneyFragment extends Fragment {
 
             }
 
-// Drawing polyline in the Google Map for the i-th route
+            // Drawing polyline in the Google Map for the i-th route
             googleMap.addPolyline(lineOptions);
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(source);
+            builder.include(destination);
+            LatLngBounds bound = builder.build();
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bound, 100), 1000, null);
         }
     }
 
@@ -285,17 +266,26 @@ public class JourneyFragment extends Fragment {
 
         // Sensor enabled
         String sensor = "sensor=false";
-        String mode = "mode=driving";
+        String mode = null;
+
+        if(modesOfTransport.contains("Car") || modesOfTransport.contains("Cab")  || modesOfTransport.contains("Motorcycle"))
+            mode = "mode=driving";
+        else if(modesOfTransport.contains("Walk"))
+            mode = "mode=walking";
+        else if(modesOfTransport.contains("Cycle"))
+            mode = "mode=bicycling";
+        else if(modesOfTransport.contains("Bus") || modesOfTransport.contains("Train")  || modesOfTransport.contains("Tram"))
+            mode = "mode=transit";
 
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode + "&" + routesAPIKey;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode + "&key=" + routesAPIKey;
 
         // Output format
         String output = "json";
 
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-
+        Log.d("JSON REQUEST:: ", url);
 
         return url;
     }
