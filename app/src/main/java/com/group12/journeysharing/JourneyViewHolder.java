@@ -1,6 +1,7 @@
 package com.group12.journeysharing;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.group12.journeysharing.R;
 public class JourneyViewHolder extends RecyclerView.ViewHolder {
 
     TextView fromTextView, toTextView, timeTextView;
+    CardView journeyContainer;
 
     public JourneyViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -20,5 +22,6 @@ public class JourneyViewHolder extends RecyclerView.ViewHolder {
         fromTextView = itemView.findViewById(R.id.fromTextView);
         toTextView = itemView.findViewById(R.id.toTextView);
         timeTextView = itemView.findViewById(R.id.timeTextView);
+        journeyContainer = itemView.findViewById(R.id.journeyContainer);
     }
 }

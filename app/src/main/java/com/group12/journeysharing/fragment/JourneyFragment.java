@@ -137,7 +137,7 @@ public class JourneyFragment extends Fragment {
                             if (dataSnapshot.hasChildren()) {
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     Journey j = snapshot.getValue(Journey.class);
-                                    if(j.getStatus().equals("active") && j.getUserId().equals(firebaseAuth.getCurrentUser().getUid()))
+                                    if(j.getStatus().equals("active") && (j.getUserId().equals(firebaseAuth.getCurrentUser().getUid()) || j.getPassengerIds().contains(firebaseAuth.getCurrentUser().getUid())))
                                     {
                                         source = new LatLng(j.getSource().getLatitude(), j.getSource().getLongitude());
                                         destination = new LatLng(j.getDestination().getLatitude(), j.getDestination().getLongitude());

@@ -109,7 +109,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnMa
         return view;
     }
 
-//    public class MapAsyncTask extends AsyncTask<>
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

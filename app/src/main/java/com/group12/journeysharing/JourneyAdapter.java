@@ -1,6 +1,7 @@
 package com.group12.journeysharing;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.annotation.NonNull;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.group12.journeysharing.activity.ConfirmJourneyActivity;
 import com.group12.journeysharing.model.Journey;
 import com.group12.journeysharing.model.LatLng;
 
@@ -43,7 +46,7 @@ public class JourneyAdapter extends RecyclerView.Adapter<JourneyViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull JourneyViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull JourneyViewHolder holder, final int i) {
 
         holder.fromTextView.setText(getAddress(journeys.get(i).getSource()));
         holder.toTextView.setText(getAddress(journeys.get(i).getDestination()));
@@ -52,6 +55,16 @@ public class JourneyAdapter extends RecyclerView.Adapter<JourneyViewHolder> {
 
         String startTimeString = new SimpleDateFormat("EEE, d MMM HH:mm a").format(new Date(startTime));
         holder.timeTextView.setText(startTimeString);
+
+        holder.journeyContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String json = new Gson().toJson(journeys.get(i));
+                Intent intent = new Intent(context, ConfirmJourneyActivity.class);
+                intent.putExtra("json", json);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
