@@ -3,12 +3,10 @@ package com.group12.journeysharing.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,9 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -40,6 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.group12.journeysharing.DirectionsJSONParser;
 import com.group12.journeysharing.R;
 import com.group12.journeysharing.Util;
+import com.group12.journeysharing.activity.BookJourneyActivity;
+import com.group12.journeysharing.activity.HomeActivity;
 import com.group12.journeysharing.model.Journey;
 
 import org.json.JSONObject;
@@ -61,6 +61,7 @@ public class JourneyFragment extends Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    Button cancelJourneyButton, startJourneyButton;
 
     LatLng source;
     LatLng destination;
@@ -69,6 +70,8 @@ public class JourneyFragment extends Fragment {
 
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
+
+    Journey journey;
 
     String routesAPIKey = "AIzaSyDqRlGeXvPrmrf9oDhfWX8jD5xGWRxPt9s";
 
@@ -91,57 +94,66 @@ public class JourneyFragment extends Fragment {
         mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
-        mMapView.onResume(); // needed to get the map to display immediately
+        cancelJourneyButton = view.findViewById(R.id.cancelJourneyButton);
+        startJourneyButton = view.findViewById(R.id.startJourneyButton);
 
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        journey = new Journey();
 
-        modesOfTransport = new ArrayList<>();
-
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
+        databaseReference.child("journey").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onMapReady(final GoogleMap mMap) {
-                googleMap = mMap;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                // For showing a move to my location button
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Journey j = snapshot.getValue(Journey.class);
+                        if(j.getStatus().equals("active") && (j.getUserId().equals(firebaseAuth.getCurrentUser().getUid()) || j.getPassengerIds().contains(firebaseAuth.getCurrentUser().getUid())))
+                        {
 
-                    // No explanation needed; request the permission
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                            Util.MY_PERMISSIONS_REQUEST_LOCATION);
+                            journey = j;
+                            if(journey.getUserId().equals(firebaseAuth.getCurrentUser().getUid()))
+                                cancelJourneyButton.setVisibility(View.GONE);
 
-                } else {
-                    // Permission has already been granted
-                    googleMap.setMyLocationEnabled(true);
+                            mMapView.onResume(); // needed to get the map to display immediately
 
-                    // Get the button view
-                    @SuppressLint("ResourceType") View locationButton = ((View) mMapView.findViewById(1).getParent()).findViewById(2);
+                            try {
+                                MapsInitializer.initialize(getActivity().getApplicationContext());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                    RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-                    // position on right bottom
-                    rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-                    rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-                    rlp.setMargins(0, 0, 30, 30);
+                            modesOfTransport = new ArrayList<>();
 
 
-                    databaseReference.child("journey").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            mMapView.getMapAsync(new OnMapReadyCallback() {
+                                @Override
+                                public void onMapReady(final GoogleMap mMap) {
+                                    googleMap = mMap;
 
-                            if (dataSnapshot.hasChildren()) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    Journey j = snapshot.getValue(Journey.class);
-                                    if(j.getStatus().equals("active") && (j.getUserId().equals(firebaseAuth.getCurrentUser().getUid()) || j.getPassengerIds().contains(firebaseAuth.getCurrentUser().getUid())))
-                                    {
-                                        source = new LatLng(j.getSource().getLatitude(), j.getSource().getLongitude());
-                                        destination = new LatLng(j.getDestination().getLatitude(), j.getDestination().getLongitude());
-                                        modesOfTransport = j.getPreference().getModesOfTransport();
+                                    // For showing a move to my location button
+                                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                            && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                        // No explanation needed; request the permission
+                                        ActivityCompat.requestPermissions(getActivity(),
+                                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                                                Util.MY_PERMISSIONS_REQUEST_LOCATION);
+
+                                    } else {
+                                        // Permission has already been granted
+                                        googleMap.setMyLocationEnabled(true);
+
+                                        // Get the button view
+                                        @SuppressLint("ResourceType") View locationButton = ((View) mMapView.findViewById(1).getParent()).findViewById(2);
+
+                                        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+                                        // position on right bottom
+                                        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+                                        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+                                        rlp.setMargins(0, 0, 30, 30);
+
+                                        source = new LatLng(journey.getSource().getLatitude(), journey.getSource().getLongitude());
+                                        destination = new LatLng(journey.getDestination().getLatitude(), journey.getDestination().getLongitude());
+                                        modesOfTransport = journey.getPreference().getModesOfTransport();
 
                                         googleMap.addMarker(new MarkerOptions().position(destination));
 
@@ -152,20 +164,38 @@ public class JourneyFragment extends Fragment {
 
                                         // Start downloading json data from Google Directions API
                                         downloadTask.execute(url);
+
+
                                     }
                                 }
-                            }
+                            });
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
+                    }
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
+
+        cancelJourneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(false);
+
+                ArrayList<String> passengerIds = journey.getPassengerIds();
+                passengerIds.remove(firebaseAuth.getCurrentUser().getUid());
+                journey.setPassengerIds(passengerIds);
+                databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
+
+                Intent intent = new Intent(getContext(), HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 
