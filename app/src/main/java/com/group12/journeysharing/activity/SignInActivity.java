@@ -2,6 +2,8 @@ package com.group12.journeysharing.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private FirebaseAuth firebaseAuth;
+    private ConnectivityManager connectivityManager;
 
 
     @Override
@@ -54,17 +57,29 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signUpButton.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
 
-        if(firebaseAuth.getCurrentUser() != null)
-        {
-            Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        else
-        {
-            Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
-        }
+        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
+
+
+            if (firebaseAuth.getCurrentUser() != null) {
+
+                if(networkInfo != null && networkInfo.isConnected()) {
+
+                    Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+
+                    Intent intent = new Intent(SignInActivity.this, OfflineActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                }
+
+            } else {
+                Toast.makeText(this, "NULL", Toast.LENGTH_SHORT).show();
+            }
 
     }
 
