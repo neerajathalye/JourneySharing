@@ -81,21 +81,24 @@ public class BookJourneyActivity extends AppCompatActivity {
                         float distanceInMeters = s1.distanceTo(s2);
                         Toast.makeText(BookJourneyActivity.this, "Distance: " + distanceInMeters, Toast.LENGTH_SHORT).show();
                         if(distanceInMeters <= journey.getPreference().getDistanceToStartingPoint() && distanceInMeters <= j.getPreference().getDistanceToStartingPoint() && j.getStatus().equals("active"))
-                            //Join existing journey
                             journeys.add(j);
-                        else
-                        {
-                            //create new journey
-                            databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
-                            databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+//                        else
+//                        {
+//
+//                        }
+                    }
 
-                            Intent intent = new Intent(BookJourneyActivity.this, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        }
+                    if(journeys.size() == 0)
+                    {
+                        //create new journey
+                        databaseReference.child("journey").child(journey.getJourneyId()).setValue(journey);
+                        databaseReference.child("user").child(firebaseAuth.getCurrentUser().getUid()).child("active").setValue(true);
+
+                        Intent intent = new Intent(BookJourneyActivity.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 }
-
 
                 journeyAdapter = new JourneyAdapter(journeys, BookJourneyActivity.this);
                 journeyRecyclerView.setAdapter(journeyAdapter);
