@@ -106,6 +106,8 @@ public class JourneyFragment extends Fragment {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Journey j = snapshot.getValue(Journey.class);
+                        if(j.getPassengerIds() == null)
+                            j.setPassengerIds(new ArrayList<String>());
                         if(j.getStatus().equals("active") && (j.getUserId().equals(firebaseAuth.getCurrentUser().getUid()) || j.getPassengerIds().contains(firebaseAuth.getCurrentUser().getUid())))
                         {
 
@@ -169,6 +171,8 @@ public class JourneyFragment extends Fragment {
                                     }
                                 }
                             });
+
+
                         }
                     }
                 }
