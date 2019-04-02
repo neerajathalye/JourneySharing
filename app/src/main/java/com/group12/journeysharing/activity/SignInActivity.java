@@ -71,7 +71,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     finish();
                 } else {
 
-                    Intent intent = new Intent(SignInActivity.this, OfflineActivity.class);
+                    Intent intent = new Intent(SignInActivity.this, OfflineActivity2.class);
                     startActivity(intent);
                     finish();
 

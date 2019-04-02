@@ -1,4 +1,4 @@
-package com.group12.journeysharing;
+package com.group12.journeysharing.viewholder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -13,8 +13,8 @@ import com.group12.journeysharing.R;
  */
 public class JourneyViewHolder extends RecyclerView.ViewHolder {
 
-    TextView fromTextView, toTextView, timeTextView;
-    CardView journeyContainer;
+    public TextView fromTextView, toTextView, timeTextView;
+    public CardView journeyContainer;
 
     public JourneyViewHolder(@NonNull View itemView) {
         super(itemView);

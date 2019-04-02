@@ -55,7 +55,7 @@ public class ConfirmJourneyActivity extends AppCompatActivity implements View.On
         modesOfTransportTextView = findViewById(R.id.modesOfTransportTextView);
         maxPassengersTextView = findViewById(R.id.maxPassengersTextView);
         genderTextView = findViewById(R.id.genderTextView);
-        nameTextView = findViewById(R.id.nameTextView);
+        nameTextView = findViewById(R.id.serviceNameTextView);
         cancelButton = findViewById(R.id.cancelButton);
         joinButton = findViewById(R.id.joinButton);
 

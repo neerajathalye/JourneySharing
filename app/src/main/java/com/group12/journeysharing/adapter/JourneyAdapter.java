@@ -1,4 +1,4 @@
-package com.group12.journeysharing;
+package com.group12.journeysharing.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.group12.journeysharing.viewholder.JourneyViewHolder;
+import com.group12.journeysharing.R;
 import com.group12.journeysharing.activity.ConfirmJourneyActivity;
 import com.group12.journeysharing.model.Journey;
 import com.group12.journeysharing.model.LatLng;

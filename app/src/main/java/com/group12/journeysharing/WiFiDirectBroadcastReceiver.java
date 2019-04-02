@@ -1,5 +1,6 @@
 package com.group12.journeysharing;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,13 +9,14 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.widget.Toast;
 
 import com.group12.journeysharing.activity.OfflineActivity;
+import com.group12.journeysharing.activity.OfflineActivity2;
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private OfflineActivity mActivity;
+    private Activity mActivity;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, OfflineActivity mActivity)
+    public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, Activity mActivity)
     {
         this.mManager = mManager;
         this.mChannel = mChannel;
@@ -37,7 +39,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             //do something
             if(mManager!=null)
             {
-                mManager.requestPeers(mChannel,mActivity);
+                mManager.requestPeers(mChannel, (WifiP2pManager.PeerListListener) mActivity);
             }
 
         }else if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
@@ -50,9 +52,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo networkInfo=intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(networkInfo.isConnected())
             {
-                mManager.requestConnectionInfo(mChannel,mActivity);
+                mManager.requestConnectionInfo(mChannel, (WifiP2pManager.ConnectionInfoListener) mActivity);
             }else {
-                mActivity.connectionStatus.setText("Device Disconnected");
+                ((OfflineActivity2) mActivity).connectionStatusTextView.setText("Device Disconnected");
             }
         }else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
             //do something

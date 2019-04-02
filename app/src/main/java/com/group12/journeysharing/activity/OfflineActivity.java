@@ -184,7 +184,6 @@ public class OfflineActivity extends AppCompatActivity implements WifiP2pManager
         if(peers.size()==0)
         {
             Toast.makeText(getApplicationContext(),"No Device Found",Toast.LENGTH_SHORT).show();
-            return;
         }
     }
 
@@ -276,10 +275,12 @@ public class OfflineActivity extends AppCompatActivity implements WifiP2pManager
         }
     }
 
-    private class SendReceive extends Thread{
+    private class SendReceive extends Thread {
+
         private Socket socket;
         private InputStream inputStream;
         private OutputStream outputStream;
+
         public SendReceive(Socket skt)
         {
             socket=skt;

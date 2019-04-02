@@ -80,7 +80,7 @@
         tools:text="@string/male" />
 
     <TextView
-        android:id="@+id/nameTextView"
+        android:id="@+id/serviceNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
