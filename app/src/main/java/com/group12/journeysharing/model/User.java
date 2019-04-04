@@ -24,46 +24,6 @@ public class User {
     public User() {
     }
 
-    //    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String homeAddress, String workAddress, String emergencyName, String emergencyPhoneNumber, String emergencyEmail, double rating) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        setFullName();
-//        this.dob = dob;
-//        this.gender = gender;
-//        this.phoneNumber = phoneNumber;
-//        this.email = email;
-//        this.homeAddress = homeAddress;
-//        this.workAddress = workAddress;
-//        this.emergencyName = emergencyName;
-//        this.emergencyPhoneNumber = emergencyPhoneNumber;
-//        this.emergencyEmail = emergencyEmail;
-//        this.rating = 0;
-//    }
-//
-//    public User(String firstName, String lastName, String dob, String gender, String phoneNumber, String email, String emergencyName, String emergencyPhoneNumber, String emergencyEmail) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        setFullName();
-//        this.dob = dob;
-//        this.gender = gender;
-//        this.phoneNumber = phoneNumber;
-//        this.email = email;
-//        this.emergencyName = emergencyName;
-//        this.emergencyPhoneNumber = emergencyPhoneNumber;
-//        this.emergencyEmail = emergencyEmail;
-//        this.rating = 0;
-//    }
-
-//    public User() {
-//        this.rating = 0;
-//    }
-
-//    public User(String firstName, String lastName, double rating) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        setFullName();
-//        this.rating = rating;
-//    }
 
     public String getFirstName() {
         return firstName;

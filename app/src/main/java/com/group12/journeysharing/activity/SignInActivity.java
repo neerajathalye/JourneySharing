@@ -1,7 +1,9 @@
 package com.group12.journeysharing.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -23,21 +25,29 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.group12.journeysharing.R;
+import com.group12.journeysharing.fragment.HomeFragment;
+import com.group12.journeysharing.fragment.JourneyFragment;
+import com.group12.journeysharing.model.User;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
-
-
 
     private Button signUpButton;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private Button signInButton;
     private TextView forgotPassword;
+    private User user;
 
 
     private FirebaseAuth firebaseAuth;
-    private ConnectivityManager connectivityManager;
+    private DatabaseReference databaseReference;
 
 
     @Override
@@ -46,6 +56,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("");
 
 
         editTextEmail = findViewById(R.id.emailField);
@@ -57,7 +68,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signUpButton.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
 
-        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
 
@@ -66,12 +77,30 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
                 if(networkInfo != null && networkInfo.isConnected()) {
 
+                    databaseReference.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            user = dataSnapshot.child(firebaseAuth.getCurrentUser().getUid()).getValue(User.class);
+                            SharedPreferences sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            String json = new Gson().toJson(user);
+                            editor.putString("user", json);
+                            editor.apply();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                     Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
 
-                    Intent intent = new Intent(SignInActivity.this, OfflineActivity2.class);
+                    Intent intent = new Intent(SignInActivity.this, OfflineActivity.class);
                     startActivity(intent);
                     finish();
 
